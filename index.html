@@ -1,0 +1,1330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Krutarth Patel — Systems Engineer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black:   #050A0F;
+      --deep:    #0A1628;
+      --cyan:    #00D4FF;
+      --purple:  #7B2FBE;
+      --green:   #00FF88;
+      --amber:   #FFB800;
+      --white:   #E8EAED;
+      --muted:   #6B7A8D;
+      --border:  rgba(0, 212, 255, 0.15);
+      --glow-c:  0 0 20px rgba(0,212,255,0.4), 0 0 60px rgba(0,212,255,0.15);
+      --glow-g:  0 0 20px rgba(0,255,136,0.4), 0 0 60px rgba(0,255,136,0.15);
+      --glow-p:  0 0 20px rgba(123,47,190,0.5), 0 0 60px rgba(123,47,190,0.2);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--black);
+      color: var(--white);
+      font-family: 'Space Grotesk', sans-serif;
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    /* ── CANVAS BACKGROUND ── */
+    #neural-canvas {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.45;
+    }
+
+    /* ── SCANLINE OVERLAY ── */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,0,0,0.03) 2px,
+        rgba(0,0,0,0.03) 4px
+      );
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.25rem 3rem;
+      background: rgba(5, 10, 15, 0.7);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--cyan);
+      letter-spacing: 0.05em;
+      text-decoration: none;
+    }
+
+    .nav-logo span { color: var(--green); }
+
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      color: var(--muted);
+      text-decoration: none;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+      position: relative;
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px; left: 0;
+      width: 0; height: 1px;
+      background: var(--cyan);
+      transition: width 0.3s;
+    }
+
+    .nav-links a:hover { color: var(--cyan); }
+    .nav-links a:hover::after { width: 100%; }
+
+    .nav-cta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--black);
+      background: var(--cyan);
+      padding: 0.55rem 1.4rem;
+      text-decoration: none;
+      clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+      transition: box-shadow 0.3s;
+    }
+
+    .nav-cta:hover { box-shadow: var(--glow-c); }
+
+    /* ── HERO ── */
+    #hero {
+      position: relative;
+      z-index: 2;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 0 3rem;
+      padding-top: 6rem;
+    }
+
+    .hero-eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      color: var(--green);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .hero-eyebrow::before {
+      content: '';
+      display: block;
+      width: 2rem;
+      height: 1px;
+      background: var(--green);
+      box-shadow: var(--glow-g);
+    }
+
+    .hero-name {
+      font-size: clamp(3.5rem, 9vw, 8rem);
+      font-weight: 700;
+      line-height: 0.95;
+      letter-spacing: -0.03em;
+      margin-bottom: 0.5rem;
+    }
+
+    .hero-name .first { color: var(--white); }
+    .hero-name .last {
+      color: transparent;
+      -webkit-text-stroke: 1.5px var(--cyan);
+      display: block;
+      text-shadow: none;
+    }
+
+    .hero-title {
+      font-size: clamp(1rem, 2.5vw, 1.5rem);
+      font-weight: 400;
+      color: var(--muted);
+      margin: 1.5rem 0 2.5rem;
+      max-width: 520px;
+      line-height: 1.5;
+    }
+
+    .hero-title strong { color: var(--cyan); font-weight: 500; }
+
+    /* Terminal typewriter */
+    .terminal-line {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.9rem;
+      color: var(--green);
+      background: rgba(0, 255, 136, 0.06);
+      border: 1px solid rgba(0, 255, 136, 0.2);
+      padding: 0.6rem 1rem;
+      margin-bottom: 2.5rem;
+      width: fit-content;
+    }
+
+    .terminal-line .prompt { color: var(--purple); }
+    .terminal-line .cursor {
+      display: inline-block;
+      width: 8px; height: 1em;
+      background: var(--green);
+      animation: blink 1s step-end infinite;
+    }
+
+    @keyframes blink { 0%,100% { opacity:1; } 50% { opacity:0; } }
+
+    .hero-actions {
+      display: flex;
+      gap: 1.25rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--black);
+      background: var(--cyan);
+      padding: 0.9rem 2rem;
+      text-decoration: none;
+      clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+      transition: box-shadow 0.3s, transform 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-primary:hover { box-shadow: var(--glow-c); transform: translateY(-2px); }
+
+    .btn-secondary {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--cyan);
+      background: transparent;
+      border: 1px solid var(--border);
+      padding: 0.9rem 2rem;
+      text-decoration: none;
+      clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+      transition: border-color 0.3s, box-shadow 0.3s, transform 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--cyan);
+      box-shadow: var(--glow-c);
+      transform: translateY(-2px);
+    }
+
+    /* Hero stats strip */
+    .hero-stats {
+      position: absolute;
+      bottom: 3rem;
+      right: 3rem;
+      display: flex;
+      gap: 2.5rem;
+    }
+
+    .stat {
+      text-align: right;
+    }
+
+    .stat-number {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 2.2rem;
+      font-weight: 600;
+      color: var(--cyan);
+      line-height: 1;
+      display: block;
+    }
+
+    .stat-label {
+      font-size: 0.72rem;
+      color: var(--muted);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .stat-divider {
+      width: 1px;
+      background: var(--border);
+      align-self: stretch;
+    }
+
+    /* ── SHARED SECTION STYLES ── */
+    section {
+      position: relative;
+      z-index: 2;
+      padding: 7rem 3rem;
+    }
+
+    .section-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--cyan);
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      margin-bottom: 0.75rem;
+    }
+
+    .section-title {
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 1rem;
+      line-height: 1.1;
+    }
+
+    .section-line {
+      width: 3rem;
+      height: 2px;
+      background: linear-gradient(90deg, var(--cyan), transparent);
+      margin-bottom: 3rem;
+    }
+
+    /* ── ABOUT ── */
+    #about { background: var(--deep); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 5rem;
+      align-items: center;
+      max-width: 1100px;
+    }
+
+    .about-text p {
+      color: #99A7B8;
+      line-height: 1.85;
+      margin-bottom: 1.25rem;
+      font-size: 1.05rem;
+    }
+
+    .about-text p strong { color: var(--white); }
+
+    .about-visual {
+      position: relative;
+    }
+
+    .profile-frame {
+      position: relative;
+      width: 280px;
+      height: 280px;
+      margin: 0 auto;
+    }
+
+    .profile-hex {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, var(--deep) 0%, #0F1E38 100%);
+      clip-path: polygon(50% 0%, 95% 25%, 95% 75%, 50% 100%, 5% 75%, 5% 25%);
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 6rem;
+    }
+
+    .profile-ring {
+      position: absolute;
+      inset: -8px;
+      clip-path: polygon(50% 0%, 95% 25%, 95% 75%, 50% 100%, 5% 75%, 5% 25%);
+      background: linear-gradient(135deg, var(--cyan), var(--purple), var(--green));
+      z-index: -1;
+      animation: spin-slow 8s linear infinite;
+    }
+
+    @keyframes spin-slow {
+      0% { filter: hue-rotate(0deg); }
+      100% { filter: hue-rotate(360deg); }
+    }
+
+    .orbit-badges {
+      position: absolute;
+      inset: 0;
+      animation: orbit-rotate 20s linear infinite;
+    }
+
+    .orbit-badge {
+      position: absolute;
+      background: rgba(10,22,40,0.95);
+      border: 1px solid var(--border);
+      padding: 0.3rem 0.6rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--cyan);
+      white-space: nowrap;
+    }
+
+    .orbit-badge:nth-child(1) { top: -10%; left: 50%; transform: translateX(-50%); }
+    .orbit-badge:nth-child(2) { top: 35%; right: -30%; }
+    .orbit-badge:nth-child(3) { bottom: -10%; left: 50%; transform: translateX(-50%); }
+    .orbit-badge:nth-child(4) { top: 35%; left: -30%; }
+
+    /* ── SKILLS ── */
+    #skills { background: var(--black); }
+
+    .skills-container { max-width: 1100px; }
+
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+
+    .skill-card {
+      background: rgba(10, 22, 40, 0.6);
+      border: 1px solid var(--border);
+      padding: 1.75rem;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.3s, transform 0.3s;
+      clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px));
+    }
+
+    .skill-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+      transform: scaleX(0);
+      transition: transform 0.4s;
+    }
+
+    .skill-card:hover { border-color: rgba(0,212,255,0.35); transform: translateY(-4px); }
+    .skill-card:hover::before { transform: scaleX(1); }
+
+    .skill-icon {
+      font-size: 1.75rem;
+      margin-bottom: 1rem;
+      display: block;
+    }
+
+    .skill-category {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      color: var(--cyan);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 0.4rem;
+    }
+
+    .skill-name {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+
+    .skill-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+
+    .tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      color: var(--muted);
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      padding: 0.2rem 0.55rem;
+      letter-spacing: 0.05em;
+    }
+
+    .tag.hot {
+      color: var(--green);
+      border-color: rgba(0,255,136,0.2);
+      background: rgba(0,255,136,0.06);
+    }
+
+    /* ── PROJECTS ── */
+    #projects { background: var(--deep); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+      max-width: 1100px;
+    }
+
+    .project-card {
+      background: rgba(5, 10, 15, 0.8);
+      border: 1px solid var(--border);
+      padding: 2rem;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.3s, transform 0.3s;
+      cursor: default;
+    }
+
+    .project-card.featured {
+      grid-column: span 2;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+    }
+
+    .project-card::after {
+      content: '';
+      position: absolute;
+      bottom: 0; right: 0;
+      width: 60px; height: 60px;
+      background: linear-gradient(135deg, transparent 50%, rgba(0,212,255,0.08) 50%);
+    }
+
+    .project-card:hover { border-color: rgba(0,212,255,0.3); transform: translateY(-3px); }
+
+    .project-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      color: var(--purple);
+      letter-spacing: 0.15em;
+      margin-bottom: 0.75rem;
+    }
+
+    .project-title {
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+      line-height: 1.3;
+    }
+
+    .project-desc {
+      color: #7A8A9B;
+      font-size: 0.92rem;
+      line-height: 1.7;
+      margin-bottom: 1.25rem;
+    }
+
+    .project-stack {
+      display: flex;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+    }
+
+    .stack-item {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      padding: 0.2rem 0.55rem;
+      border: 1px solid rgba(123,47,190,0.3);
+      color: var(--purple);
+      background: rgba(123,47,190,0.05);
+      letter-spacing: 0.05em;
+    }
+
+    .project-visual {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0,212,255,0.03);
+      border: 1px dashed rgba(0,212,255,0.12);
+      font-size: 4rem;
+      border-radius: 0;
+    }
+
+    /* ── EXPERIENCE ── */
+    #experience { background: var(--black); }
+
+    .timeline {
+      max-width: 800px;
+      position: relative;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 1px;
+      background: linear-gradient(180deg, var(--cyan), var(--purple), transparent);
+    }
+
+    .timeline-item {
+      padding: 0 0 3rem 2.5rem;
+      position: relative;
+    }
+
+    .timeline-dot {
+      position: absolute;
+      left: -5px; top: 4px;
+      width: 11px; height: 11px;
+      background: var(--black);
+      border: 2px solid var(--cyan);
+      box-shadow: var(--glow-c);
+      transform: rotate(45deg);
+    }
+
+    .timeline-period {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--cyan);
+      letter-spacing: 0.1em;
+      margin-bottom: 0.4rem;
+    }
+
+    .timeline-role {
+      font-size: 1.15rem;
+      font-weight: 600;
+      margin-bottom: 0.2rem;
+    }
+
+    .timeline-company {
+      font-size: 0.9rem;
+      color: var(--muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .timeline-desc {
+      color: #7A8A9B;
+      font-size: 0.92rem;
+      line-height: 1.7;
+    }
+
+    /* ── AI SECTION ── */
+    #ai-focus {
+      background: linear-gradient(135deg, rgba(123,47,190,0.08) 0%, rgba(0,212,255,0.05) 100%);
+      border-top: 1px solid rgba(123,47,190,0.2);
+      border-bottom: 1px solid rgba(0,212,255,0.15);
+    }
+
+    .ai-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 5rem;
+      align-items: center;
+      max-width: 1100px;
+    }
+
+    .ai-pillars {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .ai-pillar {
+      display: flex;
+      gap: 1.25rem;
+      align-items: flex-start;
+      padding: 1.25rem;
+      border: 1px solid rgba(123,47,190,0.2);
+      background: rgba(10, 22, 40, 0.4);
+      transition: border-color 0.3s;
+    }
+
+    .ai-pillar:hover { border-color: rgba(123,47,190,0.5); }
+
+    .ai-pillar-icon {
+      font-size: 1.5rem;
+      flex-shrink: 0;
+      margin-top: 0.1rem;
+    }
+
+    .ai-pillar-title {
+      font-weight: 600;
+      font-size: 0.95rem;
+      margin-bottom: 0.3rem;
+      color: var(--white);
+    }
+
+    .ai-pillar-text {
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .ai-manifesto {
+      padding: 2.5rem;
+      border: 1px solid rgba(0,212,255,0.15);
+      background: rgba(5,10,15,0.7);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .ai-manifesto::before {
+      content: 'AI SYSTEMS';
+      position: absolute;
+      top: 1rem; right: 1rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem;
+      color: rgba(0,212,255,0.2);
+      letter-spacing: 0.2em;
+    }
+
+    .ai-manifesto blockquote {
+      font-size: 1.25rem;
+      font-weight: 500;
+      line-height: 1.6;
+      color: var(--white);
+      margin-bottom: 1.5rem;
+    }
+
+    .ai-manifesto blockquote em {
+      color: var(--cyan);
+      font-style: normal;
+    }
+
+    .ai-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .ai-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--purple);
+      border: 1px solid rgba(123,47,190,0.3);
+      background: rgba(123,47,190,0.08);
+      padding: 0.3rem 0.75rem;
+      letter-spacing: 0.08em;
+    }
+
+    /* ── CONTACT ── */
+    #contact { background: var(--deep); text-align: center; }
+
+    .contact-inner {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .contact-title {
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      margin-bottom: 1rem;
+    }
+
+    .contact-title span { color: var(--cyan); }
+
+    .contact-sub {
+      color: var(--muted);
+      font-size: 1rem;
+      margin-bottom: 2.5rem;
+      line-height: 1.7;
+    }
+
+    .contact-links {
+      display: flex;
+      justify-content: center;
+      gap: 1.25rem;
+      flex-wrap: wrap;
+    }
+
+    .contact-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      color: var(--muted);
+      text-decoration: none;
+      border: 1px solid var(--border);
+      padding: 0.7rem 1.4rem;
+      letter-spacing: 0.08em;
+      transition: color 0.2s, border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .contact-link:hover {
+      color: var(--cyan);
+      border-color: var(--cyan);
+      box-shadow: var(--glow-c);
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      position: relative;
+      z-index: 2;
+      border-top: 1px solid var(--border);
+      padding: 1.5rem 3rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(5,10,15,0.9);
+    }
+
+    footer p {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+    }
+
+    footer p span { color: var(--cyan); }
+
+    /* ── SCROLL REVEAL ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: none;
+    }
+
+    /* ── SCROLLBAR ── */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--black); }
+    ::-webkit-scrollbar-thumb { background: var(--cyan); opacity: 0.4; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { display: none; }
+      section { padding: 4rem 1.5rem; }
+      #hero { padding: 0 1.5rem; padding-top: 6rem; }
+      .hero-stats { display: none; }
+      .about-grid, .ai-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+      .skills-grid { grid-template-columns: 1fr; }
+      .projects-grid { grid-template-columns: 1fr; }
+      .project-card.featured { grid-column: span 1; display: block; }
+      .project-visual { display: none; }
+      footer { flex-direction: column; gap: 0.5rem; text-align: center; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .profile-ring, .orbit-badges { animation: none; }
+      .terminal-line .cursor { animation: none; }
+      .reveal { transition: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <canvas id="neural-canvas"></canvas>
+
+  <!-- NAV -->
+  <nav>
+    <a class="nav-logo" href="#hero">KP<span>.</span>dev</a>
+    <ul class="nav-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#experience">Experience</a></li>
+      <li><a href="#ai-focus">AI Focus</a></li>
+    </ul>
+    <a class="nav-cta" href="#contact">Contact →</a>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-eyebrow">Systems Engineer &amp; AI Architect</div>
+    <h1 class="hero-name">
+      <span class="first">Krutarth</span>
+      <span class="last">Patel</span>
+    </h1>
+    <p class="hero-title">
+      Engineering <strong>resilient infrastructure</strong> and <strong>intelligent systems</strong> — where DevOps meets the frontier of AI.
+    </p>
+    <div class="terminal-line">
+      <span class="prompt">~/krutarth $</span>
+      <span id="typewriter"></span>
+      <span class="cursor"></span>
+    </div>
+    <div class="hero-actions">
+      <a class="btn-primary" href="#projects">▶ View Projects</a>
+      <a class="btn-secondary" href="#contact">◈ Get in Touch</a>
+    </div>
+
+    <div class="hero-stats">
+      <div class="stat">
+        <span class="stat-number">50+</span>
+        <span class="stat-label">Projects Shipped</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat">
+        <span class="stat-number">7+</span>
+        <span class="stat-label">Years Experience</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat">
+        <span class="stat-number">99.9%</span>
+        <span class="stat-label">Uptime Delivered</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="about-grid reveal">
+      <div class="about-text">
+        <p class="section-label">// whoami</p>
+        <h2 class="section-title">Architecting the<br>Systems of Tomorrow</h2>
+        <div class="section-line"></div>
+        <p>I'm <strong>Krutarth Patel</strong>, a Systems Engineer with deep roots in DevOps and a growing obsession with AI infrastructure. I don't just keep systems running — I redesign them to be faster, smarter, and antifragile.</p>
+        <p>My work sits at the intersection of <strong>platform engineering</strong>, <strong>cloud architecture</strong>, and <strong>intelligent automation</strong>. From wiring Kubernetes clusters at scale to building ML inference pipelines, I treat infrastructure as code and code as craft.</p>
+        <p>Currently steering toward <strong>AI Systems Engineering</strong> — designing the plumbing that makes large-scale AI applications reliable, observable, and production-grade.</p>
+      </div>
+      <div class="about-visual">
+        <div class="profile-frame">
+          <div class="profile-ring"></div>
+          <div class="profile-hex">⚙️</div>
+          <div class="orbit-badges">
+            <span class="orbit-badge">▲ KUBERNETES</span>
+            <span class="orbit-badge">◈ AI/ML OPS</span>
+            <span class="orbit-badge">⬡ TERRAFORM</span>
+            <span class="orbit-badge">⚡ CI/CD</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SKILLS -->
+  <section id="skills">
+    <div class="skills-container">
+      <p class="section-label reveal">// tech.stack</p>
+      <h2 class="section-title reveal">Full-Spectrum<br>Engineering Depth</h2>
+      <div class="section-line reveal"></div>
+      <div class="skills-grid">
+
+        <div class="skill-card reveal">
+          <span class="skill-icon">☁️</span>
+          <p class="skill-category">Cloud & Infrastructure</p>
+          <p class="skill-name">Platform Architecture</p>
+          <div class="skill-tags">
+            <span class="tag hot">AWS</span>
+            <span class="tag hot">GCP</span>
+            <span class="tag">Azure</span>
+            <span class="tag">Terraform</span>
+            <span class="tag">Pulumi</span>
+            <span class="tag">CloudFormation</span>
+          </div>
+        </div>
+
+        <div class="skill-card reveal">
+          <span class="skill-icon">🔧</span>
+          <p class="skill-category">DevOps & Automation</p>
+          <p class="skill-name">CI/CD & Pipelines</p>
+          <div class="skill-tags">
+            <span class="tag hot">Kubernetes</span>
+            <span class="tag hot">Docker</span>
+            <span class="tag">ArgoCD</span>
+            <span class="tag">Helm</span>
+            <span class="tag">Jenkins</span>
+            <span class="tag">GitHub Actions</span>
+          </div>
+        </div>
+
+        <div class="skill-card reveal">
+          <span class="skill-icon">📊</span>
+          <p class="skill-category">Observability</p>
+          <p class="skill-name">Monitoring & Alerting</p>
+          <div class="skill-tags">
+            <span class="tag hot">Prometheus</span>
+            <span class="tag hot">Grafana</span>
+            <span class="tag">Datadog</span>
+            <span class="tag">OpenTelemetry</span>
+            <span class="tag">ELK Stack</span>
+          </div>
+        </div>
+
+        <div class="skill-card reveal">
+          <span class="skill-icon">🤖</span>
+          <p class="skill-category">AI / ML Systems</p>
+          <p class="skill-name">AI Infrastructure</p>
+          <div class="skill-tags">
+            <span class="tag hot">MLflow</span>
+            <span class="tag hot">Kubeflow</span>
+            <span class="tag">Ray</span>
+            <span class="tag">Triton</span>
+            <span class="tag">LangChain</span>
+            <span class="tag">Vector DBs</span>
+          </div>
+        </div>
+
+        <div class="skill-card reveal">
+          <span class="skill-icon">💻</span>
+          <p class="skill-category">Languages & Scripting</p>
+          <p class="skill-name">Code & Automation</p>
+          <div class="skill-tags">
+            <span class="tag hot">Python</span>
+            <span class="tag hot">Go</span>
+            <span class="tag">Bash</span>
+            <span class="tag">TypeScript</span>
+            <span class="tag">YAML/HCL</span>
+            <span class="tag">SQL</span>
+          </div>
+        </div>
+
+        <div class="skill-card reveal">
+          <span class="skill-icon">🔒</span>
+          <p class="skill-category">Security & Reliability</p>
+          <p class="skill-name">SRE & DevSecOps</p>
+          <div class="skill-tags">
+            <span class="tag hot">Zero Trust</span>
+            <span class="tag">Vault</span>
+            <span class="tag">SIEM</span>
+            <span class="tag">Chaos Engineering</span>
+            <span class="tag">SLOs/SLAs</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- PROJECTS -->
+  <section id="projects">
+    <p class="section-label reveal">// selected.work</p>
+    <h2 class="section-title reveal">Projects That<br>Moved the Needle</h2>
+    <div class="section-line reveal"></div>
+    <div class="projects-grid">
+
+      <div class="project-card featured reveal">
+        <div>
+          <p class="project-num">PROJ-001 · FEATURED</p>
+          <h3 class="project-title">AI-Native Kubernetes Platform for ML Inference</h3>
+          <p class="project-desc">Designed and deployed a multi-tenant Kubernetes platform purpose-built for ML workloads — GPU autoscaling, model versioning via MLflow, and A/B traffic splitting with Istio. Reduced inference latency by 40% and cut GPU idle cost by 60%.</p>
+          <div class="project-stack">
+            <span class="stack-item">Kubernetes</span>
+            <span class="stack-item">Istio</span>
+            <span class="stack-item">MLflow</span>
+            <span class="stack-item">NVIDIA Triton</span>
+            <span class="stack-item">Terraform</span>
+            <span class="stack-item">ArgoCD</span>
+          </div>
+        </div>
+        <div class="project-visual">🧠</div>
+      </div>
+
+      <div class="project-card reveal">
+        <p class="project-num">PROJ-002</p>
+        <h3 class="project-title">Zero-Downtime Multi-Region Migration</h3>
+        <p class="project-desc">Orchestrated a live migration of monolithic services to microservices across 3 AWS regions — zero downtime, full data consistency. Implemented blue/green deployments with automated rollback triggers.</p>
+        <div class="project-stack">
+          <span class="stack-item">AWS EKS</span>
+          <span class="stack-item">RDS Aurora</span>
+          <span class="stack-item">Route 53</span>
+          <span class="stack-item">Python</span>
+        </div>
+      </div>
+
+      <div class="project-card reveal">
+        <p class="project-num">PROJ-003</p>
+        <h3 class="project-title">Unified Observability Platform</h3>
+        <p class="project-desc">Built an org-wide observability stack ingesting 2M+ metrics/min. Custom Grafana dashboards, anomaly detection with Prophet, and PagerDuty auto-routing. MTTR cut from 45 min to 8 min.</p>
+        <div class="project-stack">
+          <span class="stack-item">Prometheus</span>
+          <span class="stack-item">Grafana</span>
+          <span class="stack-item">OpenTelemetry</span>
+          <span class="stack-item">Go</span>
+        </div>
+      </div>
+
+      <div class="project-card reveal">
+        <p class="project-num">PROJ-004</p>
+        <h3 class="project-title">RAG Pipeline for Enterprise Knowledge Base</h3>
+        <p class="project-desc">End-to-end Retrieval-Augmented Generation system — document ingestion, chunking, embedding, vector search, and LLM synthesis. Deployed on GKE with automated reindexing and latency p99 &lt; 2s.</p>
+        <div class="project-stack">
+          <span class="stack-item">LangChain</span>
+          <span class="stack-item">Pinecone</span>
+          <span class="stack-item">FastAPI</span>
+          <span class="stack-item">GKE</span>
+        </div>
+      </div>
+
+      <div class="project-card reveal">
+        <p class="project-num">PROJ-005</p>
+        <h3 class="project-title">GitOps-Driven IaC Framework</h3>
+        <p class="project-desc">Company-wide IaC framework with Terraform modules, policy-as-code via OPA, and ArgoCD for drift detection. Reduced provisioning time from days to under 15 minutes across 200+ environments.</p>
+        <div class="project-stack">
+          <span class="stack-item">Terraform</span>
+          <span class="stack-item">ArgoCD</span>
+          <span class="stack-item">OPA</span>
+          <span class="stack-item">GitHub Actions</span>
+        </div>
+      </div>
+
+      <div class="project-card reveal">
+        <p class="project-num">PROJ-006</p>
+        <h3 class="project-title">Distributed Chaos Engineering Suite</h3>
+        <p class="project-desc">Built an internal chaos engineering platform with game days, automated fault injection, and resilience scoring. Increased system reliability score from 78% to 97% in two quarters.</p>
+        <div class="project-stack">
+          <span class="stack-item">Chaos Monkey</span>
+          <span class="stack-item">Litmus</span>
+          <span class="stack-item">Python</span>
+          <span class="stack-item">Slack API</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- EXPERIENCE -->
+  <section id="experience">
+    <p class="section-label reveal">// career.log</p>
+    <h2 class="section-title reveal">Where I've<br>Built Things</h2>
+    <div class="section-line reveal"></div>
+    <div class="timeline reveal">
+
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <p class="timeline-period">2023 — Present</p>
+        <p class="timeline-role">Senior Systems Engineer</p>
+        <p class="timeline-company">Infrastructure & AI Platform Division</p>
+        <p class="timeline-desc">Leading the design of AI-ready infrastructure — GPU clusters, model serving platforms, and MLOps tooling. Spearheading org-wide adoption of platform engineering principles.</p>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <p class="timeline-period">2020 — 2023</p>
+        <p class="timeline-role">DevOps Engineer</p>
+        <p class="timeline-company">Cloud-Native Engineering Team</p>
+        <p class="timeline-desc">Owned CI/CD pipelines, Kubernetes platform, and cloud cost optimization. Delivered 99.95% uptime SLA across production workloads handling millions of daily users.</p>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <p class="timeline-period">2018 — 2020</p>
+        <p class="timeline-role">Systems Engineer</p>
+        <p class="timeline-company">Platform &amp; Reliability</p>
+        <p class="timeline-desc">Built foundational monitoring infrastructure, automated on-call runbooks, and migrated legacy VM workloads to containerized microservices architectures.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- AI FOCUS -->
+  <section id="ai-focus">
+    <div class="ai-grid">
+      <div>
+        <p class="section-label reveal">// future.focus</p>
+        <h2 class="section-title reveal">AI Systems<br>Engineering</h2>
+        <div class="section-line reveal"></div>
+        <div class="ai-pillars reveal">
+          <div class="ai-pillar">
+            <span class="ai-pillar-icon">🔬</span>
+            <div>
+              <p class="ai-pillar-title">MLOps & Model Lifecycle</p>
+              <p class="ai-pillar-text">Versioning, reproducibility, continuous training, and model governance at scale.</p>
+            </div>
+          </div>
+          <div class="ai-pillar">
+            <span class="ai-pillar-icon">⚡</span>
+            <div>
+              <p class="ai-pillar-title">Inference Infrastructure</p>
+              <p class="ai-pillar-text">GPU scheduling, batching, quantization, and low-latency model serving systems.</p>
+            </div>
+          </div>
+          <div class="ai-pillar">
+            <span class="ai-pillar-icon">🔗</span>
+            <div>
+              <p class="ai-pillar-title">LLM Application Platform</p>
+              <p class="ai-pillar-text">RAG pipelines, agent orchestration, and production-grade LLM application architecture.</p>
+            </div>
+          </div>
+          <div class="ai-pillar">
+            <span class="ai-pillar-icon">📡</span>
+            <div>
+              <p class="ai-pillar-title">AI Observability</p>
+              <p class="ai-pillar-text">Drift detection, hallucination monitoring, latency tracking, and cost attribution for AI systems.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="ai-manifesto reveal">
+        <blockquote>
+          "The next decade belongs to engineers who can speak both <em>infrastructure</em> and <em>intelligence</em> — and make them trust each other."
+        </blockquote>
+        <p style="color: var(--muted); font-size: 0.88rem; margin-bottom: 1.5rem; line-height: 1.7;">
+          I'm actively building at this intersection — contributing to open-source MLOps tooling, experimenting with agentic systems, and pushing toward a future where AI workloads are as reliable and observable as any other production system.
+        </p>
+        <div class="ai-tags">
+          <span class="ai-tag">LLMOps</span>
+          <span class="ai-tag">Agent Systems</span>
+          <span class="ai-tag">Vector Infrastructure</span>
+          <span class="ai-tag">GPU Clusters</span>
+          <span class="ai-tag">FineTuning</span>
+          <span class="ai-tag">Evals</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="contact-inner reveal">
+      <p class="section-label" style="text-align:center; margin-bottom:1rem;">// let's.connect</p>
+      <h2 class="contact-title">Let's Build<br><span>Something Real</span></h2>
+      <p class="contact-sub">
+        Whether you're scaling infrastructure, launching an AI platform, or just want to geek out about distributed systems — I'm always up for a good conversation.
+      </p>
+      <div class="contact-links">
+        <a class="contact-link" href="mailto:krutarth@example.com">✉ Email</a>
+        <a class="contact-link" href="https://linkedin.com" target="_blank">in LinkedIn</a>
+        <a class="contact-link" href="https://github.com" target="_blank">⌥ GitHub</a>
+        <a class="contact-link" href="#" target="_blank">↗ Resume</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>© 2025 <span>Krutarth Patel</span> — Systems Engineer</p>
+    <p>Built with precision. <span>No frameworks. Just craft.</span></p>
+  </footer>
+
+  <script>
+    /* ── NEURAL CANVAS ── */
+    const canvas = document.getElementById('neural-canvas');
+    const ctx = canvas.getContext('2d');
+    let nodes = [];
+    const NUM_NODES = 60;
+    const MAX_DIST = 160;
+
+    function resize() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+
+    function initNodes() {
+      nodes = [];
+      for (let i = 0; i < NUM_NODES; i++) {
+        nodes.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          vx: (Math.random() - 0.5) * 0.4,
+          vy: (Math.random() - 0.5) * 0.4,
+          r: Math.random() * 2 + 1,
+          pulse: Math.random() * Math.PI * 2,
+        });
+      }
+    }
+
+    function drawFrame() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      nodes.forEach(n => {
+        n.x += n.vx;
+        n.y += n.vy;
+        n.pulse += 0.02;
+        if (n.x < 0 || n.x > canvas.width) n.vx *= -1;
+        if (n.y < 0 || n.y > canvas.height) n.vy *= -1;
+      });
+
+      // Draw edges
+      for (let i = 0; i < nodes.length; i++) {
+        for (let j = i + 1; j < nodes.length; j++) {
+          const a = nodes[i], b = nodes[j];
+          const dx = a.x - b.x, dy = a.y - b.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < MAX_DIST) {
+            const alpha = (1 - dist / MAX_DIST) * 0.35;
+            const t = (i + j) % 3;
+            let color;
+            if (t === 0) color = `rgba(0,212,255,${alpha})`;
+            else if (t === 1) color = `rgba(123,47,190,${alpha * 0.7})`;
+            else color = `rgba(0,255,136,${alpha * 0.6})`;
+            ctx.beginPath();
+            ctx.moveTo(a.x, a.y);
+            ctx.lineTo(b.x, b.y);
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 0.7;
+            ctx.stroke();
+          }
+        }
+      }
+
+      // Draw nodes
+      nodes.forEach(n => {
+        const pulse = 0.5 + 0.5 * Math.sin(n.pulse);
+        ctx.beginPath();
+        ctx.arc(n.x, n.y, n.r * (0.8 + 0.4 * pulse), 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(0,212,255,${0.4 + 0.3 * pulse})`;
+        ctx.fill();
+      });
+
+      requestAnimationFrame(drawFrame);
+    }
+
+    window.addEventListener('resize', () => { resize(); initNodes(); });
+    resize();
+    initNodes();
+    drawFrame();
+
+    /* ── TYPEWRITER ── */
+    const phrases = [
+      'deploy --env=production --replicas=12',
+      'kubectl get pods --all-namespaces',
+      'terraform apply -auto-approve',
+      'python train_model.py --gpu=4',
+      'git push origin main',
+    ];
+    let pi = 0, ci = 0, deleting = false;
+    const tw = document.getElementById('typewriter');
+
+    function typeLoop() {
+      const phrase = phrases[pi];
+      if (!deleting) {
+        tw.textContent = phrase.slice(0, ++ci);
+        if (ci === phrase.length) { deleting = true; setTimeout(typeLoop, 2000); return; }
+      } else {
+        tw.textContent = phrase.slice(0, --ci);
+        if (ci === 0) { deleting = false; pi = (pi + 1) % phrases.length; setTimeout(typeLoop, 400); return; }
+      }
+      setTimeout(typeLoop, deleting ? 40 : 75);
+    }
+    typeLoop();
+
+    /* ── SCROLL REVEAL ── */
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          observer.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.1 });
+    reveals.forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>
