@@ -4,8 +4,8 @@ on:
   push: 
       branches: ["main"]
 
-job:
-  build_scan: 
+jobs:
+  build: 
       runs-on: ubuntu-latest
       steps: 
           - name: Checkout the code
