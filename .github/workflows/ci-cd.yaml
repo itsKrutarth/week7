@@ -15,7 +15,7 @@ jobs:
             with:
               scan-type: 'fs'
               severity: HIGH,CRITICAL
-              exit-code: '0'
+              exit-code: '1'
           - name: Build docker image
             run: docker build -t 267673636159.dkr.ecr.us-east-2.amazonaws.com/nginx-with-ping:v3 .
           - name: Scan Docker image
@@ -24,7 +24,7 @@ jobs:
               image-ref: 267673636159.dkr.ecr.us-east-2.amazonaws.com/nginx-with-ping:v3
               format: 'table'
               severity: HIGH,CRITICAL
-              exit-code: '0'
+              exit-code: '1'
               ignore-unfixed: true
           - name: Pysh Docker Image to ECR
             run: echo "Pushes"
